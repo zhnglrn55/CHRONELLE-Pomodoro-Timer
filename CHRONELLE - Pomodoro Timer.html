@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chronelle | Focus Timer</title>
+<style>
+  * { box-sizing: border-box; }
+  :root {
+    --page-background: radial-gradient(circle at top left, #254d85 0, transparent 40%), linear-gradient(135deg, #08172e, #102d50 55%, #bbd4ec);
+    --text-main: #eaf7ff;
+    --text: #9ecbf0;
+    --text-secondary: #b9d6f0;
+    --text-muted: #81a8cc;
+    --accent-light: #9ed7ff;
+    --accent: #8bd7ff;
+    --accent-contrast: #09203c;
+    --surface: rgba(12, 35, 64, .72);
+    --surface-border: rgba(185, 222, 255, .22);
+    --control-surface: #0b2140;
+    --button-surface: #1c4167;
+    --button-border: #37638c;
+    --ring-track: rgba(130, 185, 235, .13);
+    --ring-inner: #102b4b;
+    --ring-border: rgba(194, 229, 255, .13);
+    --selection-outline: #eaf7ff;
+    --glow: rgba(74, 166, 255, .12);
+  }
+  body[data-theme="winter"] {
+    --page-background: radial-gradient(circle at top left, #6895c7 0, transparent 42%), linear-gradient(135deg, #111f38, #293e5b 55%, #d5e8f4);
+    --text-main: #f2f8ff; --text: #c5d9ee; --text-secondary: #d4e4f2; --text-muted: #a3b9d0;
+    --accent-light: #d6efff; --accent: #a8d9f5; --accent-contrast: #172c45;
+    --surface: rgba(26, 45, 70, .78); --surface-border: rgba(209, 234, 255, .24);
+    --control-surface: #1b304b; --button-surface: #344f70; --button-border: #6282a5;
+    --ring-track: rgba(200, 226, 247, .16); --ring-inner: #203954; --ring-border: rgba(220, 239, 255, .2);
+    --selection-outline: #f2f8ff; --glow: rgba(172, 219, 255, .16);
+  }
+  body[data-theme="summer"] {
+    --page-background: radial-gradient(circle at top left, #b87456 0, transparent 42%), linear-gradient(135deg, #3b2024, #70443b 55%, #f1c38d);
+    --text-main: #fff5e7; --text: #f2c6a4; --text-secondary: #f5d8bf; --text-muted: #d7a88c;
+    --accent-light: #ffe0a3; --accent: #ffb779; --accent-contrast: #482a25;
+    --surface: rgba(67, 37, 37, .8); --surface-border: rgba(255, 220, 184, .24);
+    --control-surface: #482d2d; --button-surface: #70483f; --button-border: #a56c55;
+    --ring-track: rgba(255, 220, 184, .15); --ring-inner: #52352f; --ring-border: rgba(255, 226, 195, .18);
+    --selection-outline: #fff5e7; --glow: rgba(255, 174, 108, .16);
+  }
+  body[data-theme="autumn"] {
+    --page-background: radial-gradient(circle at top left, #9a5a38 0, transparent 42%), linear-gradient(135deg, #281d1d, #51332d 55%, #d49a65);
+    --text-main: #fff1df; --text: #e8bd91; --text-secondary: #f0d1ad; --text-muted: #c69a75;
+    --accent-light: #ffd59a; --accent: #e8a363; --accent-contrast: #38241c;
+    --surface: rgba(52, 34, 30, .82); --surface-border: rgba(255, 211, 163, .23);
+    --control-surface: #392725; --button-surface: #654237; --button-border: #996448;
+    --ring-track: rgba(242, 198, 146, .15); --ring-inner: #452e27; --ring-border: rgba(255, 219, 177, .18);
+    --selection-outline: #fff1df; --glow: rgba(242, 158, 79, .15);
+  }
+  body[data-theme="sakura"] {
+    --page-background: radial-gradient(circle at top left, #a85f86 0, transparent 42%), linear-gradient(135deg, #291c32, #55314f 55%, #e8b9cc);
+    --text-main: #fff0f6; --text: #efc5d7; --text-secondary: #f4d7e2; --text-muted: #c99aaf;
+    --accent-light: #ffd2e1; --accent: #f2a8c4; --accent-contrast: #402539;
+    --surface: rgba(55, 33, 54, .82); --surface-border: rgba(255, 211, 230, .24);
+    --control-surface: #3d2940; --button-surface: #684365; --button-border: #a36c8f;
+    --ring-track: rgba(244, 198, 216, .15); --ring-inner: #492f4a; --ring-border: rgba(255, 222, 235, .18);
+    --selection-outline: #fff0f6; --glow: rgba(244, 150, 190, .16);
+  }
+  body[data-theme="spring"] {
+    --page-background: radial-gradient(circle at top left, #5f9d72 0, transparent 42%), linear-gradient(135deg, #172c2d, #315c4b 55%, #c6dfae);
+    --text-main: #efffea; --text: #b9dfc1; --text-secondary: #d2ecd3; --text-muted: #96bd9e;
+    --accent-light: #d3f2b4; --accent: #91d3a4; --accent-contrast: #203b2d;
+    --surface: rgba(29, 57, 48, .82); --surface-border: rgba(207, 241, 210, .23);
+    --control-surface: #203e36; --button-surface: #37664f; --button-border: #639675;
+    --ring-track: rgba(204, 234, 196, .15); --ring-inner: #29483b; --ring-border: rgba(225, 245, 216, .18);
+    --selection-outline: #efffea; --glow: rgba(138, 219, 157, .15);
+  }
+  body[data-theme="lavender"] {
+    --page-background: radial-gradient(circle at top left, #7666aa 0, transparent 42%), linear-gradient(135deg, #201c38, #433760 55%, #d4c3e7);
+    --text-main: #f5f0ff; --text: #d0c3ef; --text-secondary: #dfd5f4; --text-muted: #aaa0cf;
+    --accent-light: #e3d2ff; --accent: #bca2f2; --accent-contrast: #302448;
+    --surface: rgba(43, 35, 68, .82); --surface-border: rgba(225, 211, 255, .23);
+    --control-surface: #302849; --button-surface: #514275; --button-border: #8170ab;
+    --ring-track: rgba(218, 204, 249, .15); --ring-inner: #382f55; --ring-border: rgba(235, 224, 255, .18);
+    --selection-outline: #f5f0ff; --glow: rgba(182, 157, 255, .16);
+  }
+  body {
+    margin: 0; min-height: 100vh; display: grid; place-items: center;
+    font-family: 'Segoe UI', sans-serif; color: var(--text);
+    background: var(--page-background);
+  }
+  .dashboard {
+    width: min(96vw, 1320px); display: grid; grid-template-columns: minmax(380px, 0.9fr) minmax(420px, 1.1fr); gap: 22px;
+    align-items: start;
+  }
+  .sidebar { display: grid; gap: 16px; }
+  .panel {
+    padding: 24px 20px; border: 1px solid rgba(185, 222, 255, .22); border-radius: 28px;
+    background: var(--surface); backdrop-filter: blur(16px);
+    border-color: var(--surface-border);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .3), 0 0 35px var(--glow);
+  }
+  .card {
+    width: 100%; padding: 32px 26px; text-align: center;
+    border: 1px solid rgba(185, 222, 255, .22); border-radius: 28px;
+    background: var(--surface); backdrop-filter: blur(16px);
+    border-color: var(--surface-border);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .3), 0 0 35px var(--glow);
+  }
+  .eyebrow { letter-spacing: 4px; text-transform: uppercase; font-size: 11px; color: var(--accent-light); }
+  h1, .welcome-title, .panel-title {
+    font-family: 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+    font-weight: 500;
+  }
+  h1 { margin: 10px 0 6px; font-size: 38px; letter-spacing: 1px; }
+  .subtitle { margin: 0 0 20px; font-size: 13px; color: var(--text-secondary); }
+  .ring {
+    width: 225px; height: 225px; margin: 0 auto 25px; border-radius: 50%;
+    display: grid; place-items: center; position: relative;
+    background: conic-gradient(var(--accent) var(--progress, 100%), var(--ring-track) 0);
+    box-shadow: 0 0 30px var(--glow);
+  }
+  .ring::before { content: ''; position: absolute; inset: 9px; border-radius: 50%; background: var(--ring-inner); border: 1px solid var(--ring-border); }
+  .time {
+    position: relative; font-family: 'Bodoni MT', 'Palatino Linotype', Georgia, serif;
+    font-size: 48px; font-weight: 400; letter-spacing: 3px; font-variant-numeric: tabular-nums;
+  }
+  .status { position: relative; margin-top: 7px; font-size: 11px; letter-spacing: 3px; color: var(--accent-light); text-transform: uppercase; }
+  .settings { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 20px; color: var(--text-secondary); font-size: 13px; }
+  input, select { width: 65px; padding: 8px; border-radius: 10px; border: 1px solid var(--button-border); background: var(--control-surface); color: var(--text-main); text-align: center; font-size: 15px; outline: none; }
+  select { width: 100%; max-width: 290px; padding: 10px 12px; text-align: left; cursor: pointer; }
+  select option { background: var(--control-surface); color: var(--text-main); }
+  .theme-picker { display: grid; justify-items: center; gap: 8px; margin: 0 auto 22px; color: var(--text-secondary); font-size: 13px; }
+  .theme-picker label { font-weight: 600; }
+  button { border: 0; border-radius: 13px; padding: 12px 20px; font-size: 14px; font-weight: 600; cursor: pointer; transition: transform .15s, filter .15s; }
+  button:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  .primary { color: var(--accent-contrast); background: linear-gradient(135deg, var(--accent-light), var(--accent)); min-width: 135px; box-shadow: 0 7px 20px var(--glow); }
+  .secondary { color: var(--text-main); background: var(--button-surface); border: 1px solid var(--button-border); }
+  .actions { display: flex; justify-content: center; gap: 10px; }
+  .note { margin-top: 22px; font-size: 11px; color: var(--text-muted); }
+  .panel-title {
+    margin: 0 0 18px; font-size: 18px; font-weight: 700; color: var(--text-main);
+    letter-spacing: 1px;
+  }
+  .calendar-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px;
+    color: var(--text-main); font-size: 20px; font-weight: 700;
+  }
+  .calendar-grid {
+    display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; text-align: center;
+    font-size: 14px;
+  }
+  .weekday { color: var(--accent-light); padding: 8px 0; font-size: 12px; font-weight: 700; }
+  .day {
+    min-height: 44px; display: grid; place-items: center; border-radius: 10px;
+    width: 100%; padding: 0; border: 1px solid transparent; cursor: pointer;
+    color: var(--text-main); background: rgba(255,255,255,0.04); font-weight: 500;
+  }
+  .day:hover { transform: none; filter: brightness(1.25); }
+  .day.active {
+    background: linear-gradient(135deg, var(--accent-light), var(--accent)); color: var(--accent-contrast); font-weight: 700;
+  }
+  .day.selected { outline: 2px solid var(--selection-outline); outline-offset: 2px; }
+  .event-section { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--surface-border); }
+  .event-date { margin-bottom: 10px; color: var(--text-main); font-size: 13px; font-weight: 600; }
+  .event-list { display: grid; gap: 8px; list-style: none; margin: 12px 0 0; padding: 0; }
+  .event-item {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    padding: 9px 11px; border: 1px solid var(--surface-border); border-radius: 10px;
+    color: var(--text-main); background: rgba(255,255,255,0.03); font-size: 13px;
+  }
+  .event-item button { min-width: auto; padding: 5px 9px; color: var(--text-main); background: var(--button-surface); }
+  .empty-events { margin: 0; color: var(--text-muted); font-size: 12px; }
+  .todo-list {
+    list-style: none; padding: 0; margin: 0; display: grid; gap: 10px;
+  }
+  .todo-item {
+    display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03);
+    padding: 10px 12px; border: 1px solid var(--surface-border); border-radius: 12px;
+    color: var(--text-main);
+  }
+  .todo-item input {
+    width: 16px; height: 16px; margin: 0; accent-color: var(--accent);
+  }
+  .todo-item.completed span { color: var(--text-muted); text-decoration: line-through; }
+  .todo-input-wrap {
+    display: flex; gap: 8px; margin-top: 16px;
+  }
+  .todo-input-wrap input {
+    flex: 1; width: auto; min-width: 0; padding: 10px 12px; border-radius: 10px;
+  }
+  .todo-input-wrap button {
+    padding: 10px 12px; min-width: auto;
+  }
+  .welcome {
+    position: fixed; inset: 0; display: grid; place-items: center;
+    background: rgba(4, 16, 31, 0.7); backdrop-filter: blur(12px);
+    z-index: 10;
+  }
+  .welcome.hidden { display: none; }
+  .welcome-card {
+    width: min(90vw, 420px); padding: 30px 24px; text-align: center;
+    border-radius: 24px;     background: var(--surface);
+    border: 1px solid var(--surface-border);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .35);
+  }
+  .welcome-title { font-size: 26px; margin: 0 0 10px; }
+  .welcome-text { color: var(--text-secondary); margin: 0 0 18px; line-height: 1.5; }
+  .updates {
+    margin: 0 0 20px; padding: 16px; border: 1px solid var(--surface-border);
+    border-radius: 16px; background: rgba(255,255,255,0.035); text-align: left;
+  }
+  .updates h3 { margin: 0 0 10px; color: var(--text-main); font-size: 14px; }
+  .updates ul { margin: 0; padding-left: 20px; color: var(--text-secondary); font-size: 13px; line-height: 1.8; }
+  .signin-form { display: grid; gap: 10px; text-align: left; }
+  .signin-form label { color: var(--text-secondary); font-size: 13px; }
+  .signin-form input { width: 100%; padding: 11px 12px; text-align: left; }
+  .signin-form button { width: 100%; margin-top: 4px; }
+  .signin-note { margin: 12px 0 0; color: var(--text-muted); font-size: 11px; line-height: 1.5; }
+  .creator-credit { margin-top: 10px; color: var(--text-muted); font-size: 11px; }
+  .spotify-panel {
+    display: grid; gap: 10px; margin: 18px auto 0; padding-top: 16px;
+    border-top: 1px solid var(--surface-border);
+  }
+  .spotify-title { margin: 0; color: var(--text-main); font-size: 14px; }
+  .spotify-status { min-height: 18px; margin: 0; color: var(--text-secondary); font-size: 12px; line-height: 1.5; }
+  .spotify-status[data-error="true"] { color: #ffb4aa; }
+  .spotify-status[data-connected="true"] { color: var(--accent-light); }
+  .spotify-connect { color: #102317; background: #1ed760; }
+  .spotify-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .spotify-controls[hidden] { display: none; }
+  .spotify-controls button { padding: 10px 12px; }
+  .spotify-link { color: var(--accent-light); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+  .spotify-setup { margin: 0; color: var(--text-muted); font-size: 11px; line-height: 1.5; }
+  @media (max-width: 900px) {
+    .dashboard { grid-template-columns: 1fr; width: min(94vw, 620px); }
+    .sidebar { order: 2; }
+    .card { order: 1; }
+  }
+  @media (max-width: 360px) { .ring { width: 195px; height: 195px; } .time { font-size: 36px; } }
+</style>
+</head>
+<body>
+  <div class="welcome" id="welcomeScreen">
+    <div class="welcome-card">
+      <div class="eyebrow">✦ welcome back ✦</div>
+      <h2 class="welcome-title">Chronelle</h2>
+      <p class="welcome-text">Sign in before you begin and take a look at what’s new.</p>
+      <section class="updates" aria-labelledby="updatesTitle">
+        <h3 id="updatesTitle">What’s new</h3>
+        <ul>
+          <li>Plan your day with the calendar and events</li>
+          <li>Keep track of tasks with your to-do list</li>
+          <li>Choose a theme to match your mood or season</li>
+          <li>Add your own music to a focus session</li>
+        </ul>
+      </section>
+      <form class="signin-form" id="signinForm">
+        <label for="displayName">Your name</label>
+        <input id="displayName" name="displayName" type="text" autocomplete="name" placeholder="Enter your name" required maxlength="60" />
+        <button class="primary" type="submit">Sign in &amp; open timer</button>
+      </form>
+      <p class="signin-note">Demo sign-in only. Your name is used for this visit; no account is created and no emails are sent.</p>
+    </div>
+  </div>
+
+  <div class="dashboard">
+    <div class="sidebar">
+      <section class="panel calendar-panel" aria-label="Monthly calendar">
+        <h3 class="panel-title">Calendar</h3>
+        <div class="calendar-header">
+          <span id="monthLabel">October</span>
+          <span id="yearLabel">2026</span>
+        </div>
+        <div class="calendar-grid" id="calendarGrid" role="grid" aria-label="Calendar dates">
+          <div class="weekday" role="columnheader">Sun</div>
+          <div class="weekday" role="columnheader">Mon</div>
+          <div class="weekday" role="columnheader">Tue</div>
+          <div class="weekday" role="columnheader">Wed</div>
+          <div class="weekday" role="columnheader">Thu</div>
+          <div class="weekday" role="columnheader">Fri</div>
+          <div class="weekday" role="columnheader">Sat</div>
+        </div>
+        <section class="event-section" aria-label="Events for selected date">
+          <div class="event-date" id="selectedDateLabel"></div>
+          <div class="todo-input-wrap">
+            <input id="eventInput" type="text" placeholder="Add an event" aria-label="Event description" />
+            <button class="secondary" id="addEventBtn" type="button">Add</button>
+          </div>
+          <ul class="event-list" id="eventList" aria-live="polite"></ul>
+        </section>
+      </section>
+
+      <section class="panel todo-panel" aria-label="To-do list">
+        <h3 class="panel-title">To-do</h3>
+        <ul class="todo-list" id="todoList">
+          <li class="todo-item"><input type="checkbox" /><span>Morning planning</span></li>
+          <li class="todo-item"><input type="checkbox" /><span>Deep work session</span></li>
+          <li class="todo-item"><input type="checkbox" /><span>Reflect and reset</span></li>
+        </ul>
+        <div class="todo-input-wrap">
+          <input id="todoInput" type="text" placeholder="Add task" />
+          <button class="secondary" id="addTodoBtn">Add</button>
+        </div>
+      </section>
+    </div>
+
+    <main class="card" id="timerCard">
+      <div class="eyebrow">✦ take a little moment ✦</div>
+      <h1>Chronelle</h1>
+      <p class="subtitle">Breathe in. Focus. Let it flow.</p>
+      <div class="theme-picker">
+        <label for="themeSelect">Choose your theme</label>
+        <select id="themeSelect">
+          <option value="ocean">🌊 Ocean</option>
+          <option value="winter">❄️ Winter</option>
+          <option value="summer">☀️ Summer</option>
+          <option value="autumn">🍂 Autumn</option>
+          <option value="sakura">🌸 Sakura</option>
+          <option value="spring">🌿 Spring</option>
+          <option value="lavender">💜 Lavender</option>
+        </select>
+      </div>
+      <div class="ring" id="ring" style="--progress: 100%">
+        <div><div class="time" id="display">25:00</div><div class="status" id="status">Ready when you are</div></div>
+      </div>
+      <div class="settings">
+        <label for="minutes">Minutes</label>
+        <input id="minutes" type="number" min="1" max="180" value="25" />
+        <label for="seconds">Seconds</label>
+        <input id="seconds" type="number" min="0" max="59" value="0" />
+      </div>
+      <div class="actions">
+        <button class="primary" id="startBtn">▶ Start</button>
+        <button class="secondary" id="resetBtn">↺ Reset</button>
+      </div>
+      <div class="actions" style="margin-top: 12px;">
+        <button class="secondary" id="songBtn">🎵 Add Song</button>
+        <button class="secondary" id="musicBtn">♫ Music: Off</button>
+      </div>
+      <input id="songPicker" type="file" accept="audio/*" hidden />
+      <audio id="bgMusic" loop></audio>
+      <section class="spotify-panel" aria-labelledby="spotifyTitle">
+        <h2 class="spotify-title" id="spotifyTitle">Spotify</h2>
+        <p class="spotify-status" id="spotifyStatus" role="status" aria-live="polite">Connect Spotify to control playback from Chronelle.</p>
+        <button class="spotify-connect" id="spotifyConnectBtn" type="button">Connect Spotify</button>
+        <div class="spotify-controls" id="spotifyControls" hidden>
+          <button class="secondary" id="spotifyPlayBtn" type="button">▶ Play</button>
+          <button class="secondary" id="spotifyPauseBtn" type="button">Ⅱ Pause</button>
+          <button class="secondary" id="spotifyDisconnectBtn" type="button">Disconnect</button>
+        </div>
+        <a class="spotify-link" href="https://open.spotify.com/" target="_blank" rel="noopener noreferrer">Open Spotify Web Player</a>
+        <p class="spotify-setup">Setup: add your Spotify app Client ID in the script configuration, then register this page’s exact localhost or HTTPS URL as a redirect URL in your Spotify Developer Dashboard. Playback control requires an active Spotify device and a Premium account.</p>
+      </section>
+      <div class="note">A soft space for your focus ♡</div>
+      <div class="creator-credit">Pomodoro timer made by Zehan</div>
+    </main>
+  </div>
+<script>
+  const SPOTIFY_CLIENT_ID = 'YOUR_SPOTIFY_CLIENT_ID';
+  const SPOTIFY_REDIRECT_URI = ['http:', 'https:'].includes(window.location.protocol)
+    ? `${window.location.origin}${window.location.pathname}`
+    : '';
+  const SPOTIFY_SCOPES = 'user-read-private user-read-playback-state user-modify-playback-state';
+  const SPOTIFY_SESSION_KEY = 'chronelleSpotifySession';
+  const SPOTIFY_STATE_KEY = 'chronelleSpotifyState';
+  const SPOTIFY_VERIFIER_KEY = 'chronelleSpotifyVerifier';
+  const display = document.getElementById('display');
+  const ring = document.getElementById('ring');
+  const statusText = document.getElementById('status');
+  const themeSelect = document.getElementById('themeSelect');
+  const minutesInput = document.getElementById('minutes');
+  const secondsInput = document.getElementById('seconds');
+  const startBtn = document.getElementById('startBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const songBtn = document.getElementById('songBtn');
+  const songPicker = document.getElementById('songPicker');
+  const musicBtn = document.getElementById('musicBtn');
+  const bgMusic = document.getElementById('bgMusic');
+  const welcomeScreen = document.getElementById('welcomeScreen');
+  const signinForm = document.getElementById('signinForm');
+  const displayNameInput = document.getElementById('displayName');
+  const monthLabel = document.getElementById('monthLabel');
+  const yearLabel = document.getElementById('yearLabel');
+  const calendarGrid = document.getElementById('calendarGrid');
+  const todoInput = document.getElementById('todoInput');
+  const addTodoBtn = document.getElementById('addTodoBtn');
+  const todoList = document.getElementById('todoList');
+  const eventInput = document.getElementById('eventInput');
+  const addEventBtn = document.getElementById('addEventBtn');
+  const eventList = document.getElementById('eventList');
+  const selectedDateLabel = document.getElementById('selectedDateLabel');
+  const spotifyStatus = document.getElementById('spotifyStatus');
+  const spotifyConnectBtn = document.getElementById('spotifyConnectBtn');
+  const spotifyControls = document.getElementById('spotifyControls');
+  const spotifyPlayBtn = document.getElementById('spotifyPlayBtn');
+  const spotifyPauseBtn = document.getElementById('spotifyPauseBtn');
+  const spotifyDisconnectBtn = document.getElementById('spotifyDisconnectBtn');
+  const availableThemes = new Set(['ocean', 'winter', 'summer', 'autumn', 'sakura', 'spring', 'lavender']);
+  let spotifySession = null;
+  let selectedDate = dateKey(new Date());
+  let eventsByDate = {};
+  try {
+    eventsByDate = JSON.parse(localStorage.getItem('blueDreamEvents') || '{}');
+  } catch (error) {
+    eventsByDate = {};
+  }
+  let remaining = 1500, total = 1500, interval = null, running = false, musicOn = false;
+
+  function dateKey(date) {
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${date.getFullYear()}-${month}-${day}`;
+  }
+
+  function formatTime(seconds) {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
+  function setSpotifyStatus(message, { error = false, connected = false } = {}) {
+    spotifyStatus.textContent = message;
+    spotifyStatus.dataset.error = String(error);
+    spotifyStatus.dataset.connected = String(connected);
+  }
+  function getSpotifyRedirectUri() {
+    if (!['http:', 'https:'].includes(window.location.protocol)) {
+      throw new Error('Run Chronelle from localhost or an HTTPS site before connecting Spotify.');
+    }
+    if (SPOTIFY_CLIENT_ID === 'YOUR_SPOTIFY_CLIENT_ID' || !SPOTIFY_CLIENT_ID.trim()) {
+      throw new Error('Add your Spotify app Client ID in the script configuration first.');
+    }
+    if (!SPOTIFY_REDIRECT_URI) {
+      throw new Error('Run Chronelle from localhost or HTTPS so Spotify has a valid redirect URL.');
+    }
+    const currentUrl = `${window.location.origin}${window.location.pathname}`;
+    if (SPOTIFY_REDIRECT_URI !== currentUrl) {
+      throw new Error('The configured Spotify redirect URL must exactly match this page URL and be registered in your Spotify app.');
+    }
+    return SPOTIFY_REDIRECT_URI;
+  }
+  function randomVerifier() {
+    const bytes = crypto.getRandomValues(new Uint8Array(64));
+    return btoa(String.fromCharCode(...bytes))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  async function createCodeChallenge(verifier) {
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
+    return btoa(String.fromCharCode(...new Uint8Array(digest)))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  async function connectSpotify() {
+    const redirectUri = getSpotifyRedirectUri();
+    const verifier = randomVerifier();
+    const state = randomVerifier();
+    const challenge = await createCodeChallenge(verifier);
+    sessionStorage.setItem(SPOTIFY_STATE_KEY, state);
+    sessionStorage.setItem(SPOTIFY_VERIFIER_KEY, verifier);
+    const authorizeUrl = new URL('https://accounts.spotify.com/authorize');
+    authorizeUrl.search = new URLSearchParams({
+      client_id: SPOTIFY_CLIENT_ID,
+      response_type: 'code',
+      redirect_uri: redirectUri,
+      scope: SPOTIFY_SCOPES,
+      state,
+      code_challenge_method: 'S256',
+      code_challenge: challenge
+    });
+    window.location.assign(authorizeUrl);
+  }
+  async function spotifyTokenRequest(body) {
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ ...body, client_id: SPOTIFY_CLIENT_ID })
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error_description || result.error || `Spotify authorization failed (${response.status}).`);
+    }
+    return result;
+  }
+  function saveSpotifySession(session) {
+    spotifySession = session;
+    sessionStorage.setItem(SPOTIFY_SESSION_KEY, JSON.stringify(session));
+    spotifyConnectBtn.hidden = true;
+    spotifyControls.hidden = false;
+  }
+  function clearSpotifySession() {
+    spotifySession = null;
+    sessionStorage.removeItem(SPOTIFY_SESSION_KEY);
+    spotifyConnectBtn.hidden = false;
+    spotifyControls.hidden = true;
+  }
+  async function getSpotifyAccessToken() {
+    if (!spotifySession) throw new Error('Connect your Spotify account first.');
+    if (spotifySession.expiresAt > Date.now() + 60000) return spotifySession.accessToken;
+    if (!spotifySession.refreshToken) {
+      clearSpotifySession();
+      throw new Error('Your Spotify session expired. Connect your account again.');
+    }
+    const refreshed = await spotifyTokenRequest({
+      grant_type: 'refresh_token',
+      refresh_token: spotifySession.refreshToken
+    });
+    saveSpotifySession({
+      ...spotifySession,
+      accessToken: refreshed.access_token,
+      refreshToken: refreshed.refresh_token || spotifySession.refreshToken,
+      expiresAt: Date.now() + refreshed.expires_in * 1000
+    });
+    return spotifySession.accessToken;
+  }
+  async function spotifyApiRequest(endpoint, method) {
+    const accessToken = await getSpotifyAccessToken();
+    const response = await fetch(`https://api.spotify.com/v1${endpoint}`, {
+      method,
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    if (!response.ok) {
+      const details = await response.json().catch(() => ({}));
+      if (response.status === 404) {
+        throw new Error('No active Spotify device found. Open Spotify on a device and start playback first.');
+      }
+      throw new Error(details.error?.message || `Spotify request failed (${response.status}).`);
+    }
+  }
+  async function finishSpotifyConnection() {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    const returnedState = params.get('state');
+    const authError = params.get('error');
+    if (!code && !authError) return;
+    const expectedState = sessionStorage.getItem(SPOTIFY_STATE_KEY);
+    const verifier = sessionStorage.getItem(SPOTIFY_VERIFIER_KEY);
+    sessionStorage.removeItem(SPOTIFY_STATE_KEY);
+    sessionStorage.removeItem(SPOTIFY_VERIFIER_KEY);
+    window.history.replaceState({}, document.title, window.location.pathname);
+    if (authError) throw new Error(`Spotify sign-in was not completed: ${authError}.`);
+    if (!expectedState || returnedState !== expectedState || !verifier) {
+      throw new Error('Spotify sign-in could not be verified. Please try connecting again.');
+    }
+    const redirectUri = getSpotifyRedirectUri();
+    const token = await spotifyTokenRequest({
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: redirectUri,
+      code_verifier: verifier
+    });
+    saveSpotifySession({
+      accessToken: token.access_token,
+      refreshToken: token.refresh_token,
+      expiresAt: Date.now() + token.expires_in * 1000
+    });
+  }
+  async function restoreSpotifySession() {
+    const savedSession = sessionStorage.getItem(SPOTIFY_SESSION_KEY);
+    if (!savedSession) return;
+    try {
+      spotifySession = JSON.parse(savedSession);
+      if (!spotifySession.accessToken || !spotifySession.expiresAt) {
+        throw new Error('Saved Spotify session is invalid. Please connect again.');
+      }
+      const accessToken = await getSpotifyAccessToken();
+      const response = await fetch('https://api.spotify.com/v1/me', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+      if (!response.ok) throw new Error(`Could not load your Spotify account (${response.status}).`);
+      const profile = await response.json();
+      spotifyConnectBtn.hidden = true;
+      spotifyControls.hidden = false;
+      setSpotifyStatus(`Connected as ${profile.display_name || profile.id}.`, { connected: true });
+    } catch (error) {
+      clearSpotifySession();
+      setSpotifyStatus(error.message || 'Could not restore your Spotify connection.', { error: true });
+    }
+  }
+  function applyTheme(theme, persist = false) {
+    if (!availableThemes.has(theme)) {
+      throw new Error(`Unknown theme: ${theme}`);
+    }
+    document.body.dataset.theme = theme;
+    themeSelect.value = theme;
+    if (persist) {
+      try {
+        localStorage.setItem('blueDreamTheme', theme);
+      } catch (error) {
+        console.warn('Could not save the selected theme.', error);
+      }
+    }
+  }
+  function render() {
+    display.textContent = formatTime(remaining);
+    const progress = total > 0 ? (remaining / total) * 100 : 0;
+    ring.style.setProperty('--progress', `${progress}%`);
+    document.title = `${formatTime(remaining)} • Chronelle`;
+  }
+  function stopTimer() {
+    clearInterval(interval); interval = null; running = false;
+    startBtn.textContent = '▶ Start';
+
+    if (bgMusic && bgMusic.src) {
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+      musicOn = false;
+      musicBtn.textContent = '♫ Music: Off';
+    }
+  }
+  function startTimer() {
+    if (running) { stopTimer(); statusText.textContent = 'Paused'; return; }
+    if (remaining <= 0) setFromInputs();
+    if (remaining <= 0) return;
+    running = true; startBtn.textContent = 'Ⅱ Pause'; statusText.textContent = 'You’ve got this';
+
+    if (bgMusic.src && !musicOn) {
+      bgMusic.play().then(() => {
+        musicOn = true;
+        musicBtn.textContent = '♫ Music: On';
+      }).catch(() => {
+        musicOn = false;
+        musicBtn.textContent = '♫ Music: Off';
+      });
+    }
+
+    interval = setInterval(() => {
+      remaining--; render();
+      if (remaining <= 0) {
+        stopTimer(); statusText.textContent = 'Beautifully done ✦';
+        startBtn.textContent = '▶ Start';
+        try { if ('Notification' in window && Notification.permission === 'granted') new Notification('Chronelle', { body: 'Your timer is complete. Great work!' }); } catch(e) {}
+      }
+    }, 1000);
+  }
+  function setFromInputs() {
+    const mins = Math.max(0, Math.min(180, Number(minutesInput.value) || 0));
+    const secs = Math.max(0, Math.min(59, Number(secondsInput.value) || 0));
+    total = remaining = mins * 60 + secs;
+    render(); statusText.textContent = 'Ready when you are';
+  }
+  function renderCalendar() {
+    const today = new Date();
+    const month = today.getMonth();
+    const year = today.getFullYear();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startOffset = firstDay.getDay();
+    const totalDays = lastDay.getDate();
+
+    monthLabel.textContent = today.toLocaleString('en-US', { month: 'long' });
+    yearLabel.textContent = year;
+
+    const existingDays = [...calendarGrid.querySelectorAll('.day')];
+    existingDays.forEach(day => day.remove());
+
+    for (let i = 0; i < startOffset; i++) {
+      const blank = document.createElement('div');
+      blank.className = 'day';
+      blank.style.opacity = '0.2';
+      blank.textContent = '';
+      calendarGrid.appendChild(blank);
+    }
+
+    for (let day = 1; day <= totalDays; day++) {
+      const cell = document.createElement('button');
+      const cellDate = new Date(year, month, day);
+      const key = dateKey(cellDate);
+      cell.className = 'day';
+      cell.setAttribute('role', 'gridcell');
+      cell.setAttribute('aria-label', cellDate.toLocaleDateString('en-US', {
+        weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+      }));
+      cell.setAttribute('aria-pressed', String(key === selectedDate));
+      if (day === today.getDate()) cell.classList.add('active');
+      if (key === selectedDate) cell.classList.add('selected');
+      cell.textContent = day;
+      cell.type = 'button';
+      cell.addEventListener('click', () => {
+        selectedDate = key;
+        calendarGrid.querySelectorAll('.day').forEach(dateCell => {
+          const isSelected = dateCell === cell;
+          dateCell.classList.toggle('selected', isSelected);
+          dateCell.setAttribute('aria-pressed', String(isSelected));
+        });
+        renderEvents();
+      });
+      calendarGrid.appendChild(cell);
+    }
+    renderEvents();
+  }
+
+  function renderEvents() {
+    const [year, month, day] = selectedDate.split('-').map(Number);
+    selectedDateLabel.textContent = new Date(year, month - 1, day).toLocaleDateString('en-US', {
+      weekday: 'long', month: 'long', day: 'numeric'
+    });
+    eventList.replaceChildren();
+    const events = eventsByDate[selectedDate] || [];
+    if (events.length === 0) {
+      const emptyMessage = document.createElement('li');
+      emptyMessage.className = 'empty-events';
+      emptyMessage.textContent = 'No events for this day';
+      eventList.appendChild(emptyMessage);
+      return;
+    }
+
+    events.forEach((eventText, index) => {
+      const item = document.createElement('li');
+      item.className = 'event-item';
+      const label = document.createElement('span');
+      label.textContent = eventText;
+      const removeButton = document.createElement('button');
+      removeButton.type = 'button';
+      removeButton.textContent = 'Remove';
+      removeButton.setAttribute('aria-label', `Remove event: ${eventText}`);
+      removeButton.addEventListener('click', () => {
+        eventsByDate[selectedDate].splice(index, 1);
+        saveEvents();
+        renderEvents();
+      });
+      item.append(label, removeButton);
+      eventList.appendChild(item);
+    });
+  }
+
+  function saveEvents() {
+    try {
+      localStorage.setItem('blueDreamEvents', JSON.stringify(eventsByDate));
+    } catch (error) {}
+  }
+
+  function addEvent() {
+    const text = eventInput.value.trim();
+    if (!text) return;
+    if (!Array.isArray(eventsByDate[selectedDate])) eventsByDate[selectedDate] = [];
+    eventsByDate[selectedDate].push(text);
+    saveEvents();
+    eventInput.value = '';
+    renderEvents();
+  }
+
+  function addTodoItem() {
+    const text = todoInput.value.trim();
+    if (!text) return;
+
+    const item = document.createElement('li');
+    item.className = 'todo-item';
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    const label = document.createElement('span');
+    label.textContent = text;
+    item.append(checkbox, label);
+    todoList.appendChild(item);
+    todoInput.value = '';
+  }
+
+  signinForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const displayName = displayNameInput.value.trim();
+    if (!displayName) {
+      displayNameInput.focus();
+      return;
+    }
+    welcomeScreen.classList.add('hidden');
+    statusText.textContent = `Welcome, ${displayName}`;
+  });
+
+  addTodoBtn.addEventListener('click', addTodoItem);
+  todoList.addEventListener('change', (event) => {
+    if (event.target.matches('input[type="checkbox"]')) {
+      event.target.closest('.todo-item').classList.toggle('completed', event.target.checked);
+    }
+  });
+  todoInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') addTodoItem();
+  });
+  addEventBtn.addEventListener('click', addEvent);
+  eventInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') addEvent();
+  });
+
+  startBtn.addEventListener('click', startTimer);
+  resetBtn.addEventListener('click', () => {
+    stopTimer();
+    setFromInputs();
+    statusText.textContent = 'Ready when you are';
+  });
+  minutesInput.addEventListener('change', () => { if (!running) setFromInputs(); });
+  secondsInput.addEventListener('change', () => { if (!running) setFromInputs(); });
+
+  songBtn.addEventListener('click', () => songPicker.click());
+
+  songPicker.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const objectUrl = URL.createObjectURL(file);
+    bgMusic.src = objectUrl;
+    bgMusic.load();
+  });
+
+  musicBtn.addEventListener('click', async () => {
+    if (!bgMusic.src) {
+      alert('Choose a song first using the Add Song button.');
+      return;
+    }
+
+    if (!musicOn) {
+      try {
+        await bgMusic.play();
+        musicOn = true;
+        musicBtn.textContent = '♫ Music: On';
+      } catch (err) {
+        alert('Your browser blocked autoplay. Click the Music button again after interacting with the page.');
+      }
+    } else {
+      bgMusic.pause();
+      musicOn = false;
+      musicBtn.textContent = '♫ Music: Off';
+    }
+  });
+
+  spotifyConnectBtn.addEventListener('click', async () => {
+    try {
+      await connectSpotify();
+    } catch (error) {
+      setSpotifyStatus(error.message || 'Could not start Spotify sign-in.', { error: true });
+    }
+  });
+  spotifyPlayBtn.addEventListener('click', async () => {
+    try {
+      await spotifyApiRequest('/me/player/play', 'PUT');
+      setSpotifyStatus('Spotify playback started.', { connected: true });
+    } catch (error) {
+      setSpotifyStatus(error.message || 'Could not start Spotify playback.', { error: true });
+    }
+  });
+  spotifyPauseBtn.addEventListener('click', async () => {
+    try {
+      await spotifyApiRequest('/me/player/pause', 'PUT');
+      setSpotifyStatus('Spotify playback paused.', { connected: true });
+    } catch (error) {
+      setSpotifyStatus(error.message || 'Could not pause Spotify playback.', { error: true });
+    }
+  });
+  spotifyDisconnectBtn.addEventListener('click', () => {
+    clearSpotifySession();
+    setSpotifyStatus('Spotify disconnected from this browser session.');
+  });
+  async function initializeSpotify() {
+    try {
+      await finishSpotifyConnection();
+      await restoreSpotifySession();
+    } catch (error) {
+      clearSpotifySession();
+      setSpotifyStatus(error.message || 'Could not connect to Spotify.', { error: true });
+    }
+  }
+  initializeSpotify();
+
+  themeSelect.addEventListener('change', () => applyTheme(themeSelect.value, true));
+  try {
+    const savedTheme = localStorage.getItem('blueDreamTheme');
+    applyTheme(savedTheme && availableThemes.has(savedTheme) ? savedTheme : 'ocean');
+  } catch (error) {
+    console.warn('Could not load the saved theme.', error);
+    applyTheme('ocean');
+  }
+
+  renderCalendar();
+  render();
+</script>
+</body>
+</html>
+
